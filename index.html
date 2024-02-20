@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+
+  <div id="mydiv"></div>
+
+  <script type="text/babel">
+    // import './App.css';
+    //import { useState, useRef, useEffect } from 'react';
+    const { useState, useRef, useEffect } = React; // to import  { useState, useRef, useEffect } from React this equal to last 2 line
+    function App() {
+      const [todos, setTodos] = useState(JSON.parse(localStorage.getItem('todos')) || []);
+
+      const inputref = useRef();
+
+      useEffect(() => {
+        localStorage.setItem('todos', JSON.stringify(todos));
+      }, [todos]);
+
+      const HandelClick = () => {
+        let task = inputref.current.value;
+        let newItem = { state: false, task };
+        setTodos([...todos, newItem]);
+        inputref.current.value = "";
+      }
+
+      const HandelLi = (index) => {
+        const newTodos = [...todos];
+        newTodos[index].state = !newTodos[index].state;
+        setTodos(newTodos);
+      }
+
+      const HandelDelete = (index) => {
+        const newTodos = [...todos];
+        newTodos.splice(index, 1);
+        setTodos(newTodos);
+      }
+
+      return (
+        <div className="App">
+          <h2>To Do List</h2>
+          <ul>
+            {todos.map(({ task, state }, index) => (
+              <div key={index}>
+                <li className={state ? "done" : ""} onClick={() => HandelLi(index)}>{task}</li>
+                <span onClick={() => HandelDelete(index)}>❌</span>
+              </div>
+            ))}
+          </ul>
+          <input ref={inputref} />
+          <button onClick={HandelClick}>Add</button>
+        </div>
+      );
+    }
+
+
+    const container = document.getElementById('mydiv');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />)
+  </script>
+
+</body>
+
+</html>
